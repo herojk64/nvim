@@ -1,23 +1,30 @@
--- lua/plugins/treesitter.lua
 return {
-  {
-    "nvim-treesitter/nvim-treesitter",
-    build = ":TSUpdate",
-    lazy= false,
-    config = function()
-      require("nvim-treesitter").setup {
-        ensure_installed = { "lua", "python", "javascript", "typescript" },
-        highlight = { enable = true },
-        indent = { enable = true },
-	install_dir = vim.fn.expand('~/.local/data/site')
-      }
-      require('nvim-treesitter').install {
-	'lua',
-	'python',
-	'javascript',
-	'typescript'
-      }
-    end,
-  }
-}
+	{
+		"nvim-treesitter/nvim-treesitter",
+		build = ":TSUpdate",
+		lazy = false,
+		config = function()
+			local ts = require("nvim-treesitter")
+			local parsers = {
+				"lua",
+				"python",
+				"javascript",
+				"typescript",
+				"html",
+				"css",
+				"json",
+				"tsx",
+				"svelte",
+			}
 
+			ts.install(parsers)
+
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = parsers,
+				callback = function()
+					vim.treesitter.start()
+				end,
+			})
+		end,
+	},
+}
